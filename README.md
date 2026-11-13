@@ -9,7 +9,7 @@ Una sola imagen (.NET 10) que corre en uno de dos roles (`EVENTS_ROLE`):
 | Rol | Sirve | Dónde |
 |---|---|---|
 | `public` | API del evento, check-in, WebSocket y web del kiosco, imágenes y QR | `https://events.idp.tripleenable.com` |
-| `admin` | Panel y su API | `https://events.idp.tripleenable.com/admin`, detrás de usuario y contraseña de Traefik |
+| `admin` | Panel y su API | `https://events-admin.idp.tripleenable.com`, detrás de usuario y contraseña de Traefik |
 
 Los dos usan el mismo Postgres. Un check-in llega al kiosco por `LISTEN/NOTIFY`, así funciona con cualquier número
 de instancias.
@@ -55,6 +55,6 @@ EVENTS_ROLE=all DATABASE_URL=postgres://postgres:devpass@127.0.0.1:55432/postgre
 dotnet test
 ```
 
-Panel en `http://localhost:8099/admin/`. Las migraciones (`src/Events/Db/Migrations`) se aplican solas al arrancar.
+Panel en `http://localhost:8099/` (con `EVENTS_ROLE=all` comparte puerto con el API). Las migraciones (`src/Events/Db/Migrations`) se aplican solas al arrancar.
 
 Despliegue: `docs/despliegue.md`.

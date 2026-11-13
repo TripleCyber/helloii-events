@@ -135,5 +135,8 @@ public class EventsOptionsTests
         Assert.Equal("events", b.Database);
         Assert.Equal(Npgsql.SslMode.Disable, b.SslMode);
         Assert.Equal("Host=x", EventsOptions.ToNpgsql("Host=x"));
+        Assert.Equal("db-host", new Npgsql.NpgsqlConnectionStringBuilder(
+            EventsOptions.ToNpgsql("  \"postgres://u:p@db-host:5432/events\" ")).Host);
+        Assert.Throws<InvalidOperationException>(() => EventsOptions.ToNpgsql("not a connection"));
     }
 }

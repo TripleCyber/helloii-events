@@ -59,9 +59,6 @@ app.Use(async (ctx, next) =>
     await next();
 });
 
-// Coolify serves the panel under /admin; the prefix may or may not be stripped before it gets here.
-if (options.ServesAdmin) app.UsePathBase("/admin");
-
 await app.Services.GetRequiredService<Database>().MigrateAsync();
 
 app.MapGet("/healthz", async (Database db, CancellationToken ct) =>

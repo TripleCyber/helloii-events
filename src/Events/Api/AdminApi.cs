@@ -76,6 +76,11 @@ public static class AdminApi
         admin.MapDelete("/events/{code}", async (string code, EventStore store, CancellationToken ct) =>
             await store.DeleteAsync(code, ct) ? Results.NoContent() : Results.NotFound());
 
+        admin.MapGet("/events/{code}/qr.svg", async (string code, EventStore store, EventsOptions options, CancellationToken ct) =>
+            await store.GetAsync(code, ct) is null
+                ? Results.NotFound()
+                : Results.File(System.Text.Encoding.UTF8.GetBytes(PublicApi.QrSvg(options.EventLink(code))), "image/svg+xml", $"qr-{code}.svg"));
+
         admin.MapPost("/events/{code}/kiosk-token", async (string code, EventStore store, EventsOptions options, CancellationToken ct) =>
             await store.RotateKioskTokenAsync(code, ct) is { } token
                 ? Results.Ok(new { kioskUrl = options.KioskUrl(code, token) })

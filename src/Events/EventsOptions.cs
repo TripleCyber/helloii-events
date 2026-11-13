@@ -47,6 +47,12 @@ public sealed record EventsOptions(
     // Coolify hands out postgres:// URLs; Npgsql wants key=value pairs.
     public static string ToNpgsql(string value)
     {
+        // Pasted values often keep surrounding spaces or quotes.
+        value = value.Trim().Trim('"', '\'').Trim();
+        if (!value.Contains("://", StringComparison.Ordinal) && !value.Contains('=', StringComparison.Ordinal))
+        {
+            throw new InvalidOperationException("DATABASE_URL must be a postgres:// URL or a key=value connection string");
+        }
         if (!value.StartsWith("postgres://", StringComparison.Ordinal) &&
             !value.StartsWith("postgresql://", StringComparison.Ordinal))
         {

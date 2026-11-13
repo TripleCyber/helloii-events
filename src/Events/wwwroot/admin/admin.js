@@ -283,10 +283,10 @@ async function renderEditor(code) {
 
   const share = creating ? null : h('section', { class: 'section share' }, h('h2', {}, 'Compartir'),
     h('div', { class: 'qr-box' },
-      h('img', { src: ev.qrUrl, alt: 'QR del evento' }),
+      h('img', { src: `api/admin/events/${encodeURIComponent(ev.code)}/qr.svg`, alt: 'QR del evento' }),
       h('div', { class: 'share' },
         h('div', { class: 'sub' }, 'El QR abre la app en el evento.'),
-        h('div', {}, h('a', { class: 'btn btn-sm', href: ev.qrUrl, download: `qr-${ev.code}.svg` }, 'Descargar QR')))),
+        h('div', {}, h('a', { class: 'btn btn-sm', href: `api/admin/events/${encodeURIComponent(ev.code)}/qr.svg`, download: `qr-${ev.code}.svg` }, 'Descargar QR')))),
     h('div', { class: 'share-row' }, h('span', { class: 'sub' }, 'Enlace del QR'), h('code', {}, ev.eventLink), h('button', { class: 'btn btn-sm', onclick: () => copy(ev.eventLink) }, 'Copiar')),
     h('div', { class: 'share-row' }, h('span', { class: 'sub' }, 'Kiosco'), h('code', {}, ev.kioskUrl),
       h('div', { class: 'card-actions' },

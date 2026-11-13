@@ -50,10 +50,7 @@ public static class PublicApi
         api.MapGet("/qr.svg", async (string code, EventStore store, EventsOptions options, CancellationToken ct) =>
         {
             if (!EventRules.IsCode(code) || await store.GetAsync(code, ct) is null) return Results.NotFound();
-            using var generator = new QRCodeGenerator();
-            using var data = generator.CreateQrCode(options.EventLink(code), QRCodeGenerator.ECCLevel.M);
-            var svg = new SvgQRCode(data).GetGraphic(10, "#06090F", "#FFFFFF", drawQuietZones: true);
-            return Results.Text(svg, "image/svg+xml");
+            return Results.Text(QrSvg(options.EventLink(code)), "image/svg+xml");
         });
 
         api.MapGet("/attendees/{id:long}/photo", async (HttpRequest req, string code, long id, EventStore store, CancellationToken ct) =>
@@ -159,6 +156,13 @@ public static class PublicApi
         {
             return null;
         }
+    }
+
+    public static string QrSvg(string link)
+    {
+        using var generator = new QRCodeGenerator();
+        using var data = generator.CreateQrCode(link, QRCodeGenerator.ECCLevel.M);
+        return new SvgQRCode(data).GetGraphic(10, "#06090F", "#FFFFFF", drawQuietZones: true);
     }
 
     private static bool TokenMatches(string expected, string? given) =>
