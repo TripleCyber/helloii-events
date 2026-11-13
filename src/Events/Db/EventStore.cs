@@ -12,7 +12,7 @@ public sealed class EventStore(Database db)
     private const string EventColumns = """
         id, code, title, description, venue, organizer_name, organizer_color, organizer_logo,
         starts_at, ends_at, check_in_opens_at, check_in_closes_at, cancelled, theme::text as theme,
-        kiosk_token, created_at, updated_at
+        kiosk_token, debug, kiosk_orientation, created_at, updated_at
         """;
 
     private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web);
@@ -131,7 +131,7 @@ public sealed class EventStore(Database db)
         await using var conn = await db.OpenAsync(ct);
         return (await conn.QueryAsync<EventSummaryRow>(
             """
-            select e.code, e.title, e.starts_at, e.ends_at, e.check_in_opens_at, e.check_in_closes_at, e.cancelled,
+            select e.code, e.title, e.starts_at, e.ends_at, e.check_in_opens_at, e.check_in_closes_at, e.cancelled, e.debug,
                    (select count(*) from check_ins c where c.event_id = e.id) as attendee_count
             from events e order by e.starts_at desc
             """)).AsList();
@@ -144,9 +144,9 @@ public sealed class EventStore(Database db)
         var id = await conn.ExecuteScalarAsync<Guid>(
             """
             insert into events (code, title, description, venue, organizer_name, organizer_color, organizer_logo,
-                starts_at, ends_at, check_in_opens_at, check_in_closes_at, cancelled, theme, kiosk_token)
+                starts_at, ends_at, check_in_opens_at, check_in_closes_at, cancelled, theme, kiosk_token, debug, kiosk_orientation)
             values (@code, @Title, @Description, @Venue, @OrganizerName, @OrganizerColor, @OrganizerLogo,
-                @StartsAt, @EndsAt, @CheckInOpensAt, @CheckInClosesAt, @Cancelled, @theme::jsonb, @token)
+                @StartsAt, @EndsAt, @CheckInOpensAt, @CheckInClosesAt, @Cancelled, @theme::jsonb, @token, @Debug, @KioskOrientation)
             returning id
             """,
             Params(d, new { code, theme = ThemeJson(d.Theme), token = EventRules.NewKioskToken() }), tx);
@@ -164,7 +164,8 @@ public sealed class EventStore(Database db)
             update events set title = @Title, description = @Description, venue = @Venue,
                 organizer_name = @OrganizerName, organizer_color = @OrganizerColor, organizer_logo = @OrganizerLogo,
                 starts_at = @StartsAt, ends_at = @EndsAt, check_in_opens_at = @CheckInOpensAt,
-                check_in_closes_at = @CheckInClosesAt, cancelled = @Cancelled, theme = @theme::jsonb, updated_at = now()
+                check_in_closes_at = @CheckInClosesAt, cancelled = @Cancelled, theme = @theme::jsonb,
+                debug = @Debug, kiosk_orientation = @KioskOrientation, updated_at = now()
             where code = @code returning id
             """,
             Params(d, new { code, theme = ThemeJson(d.Theme) }), tx);
@@ -237,6 +238,8 @@ public sealed class EventStore(Database db)
         p.Add("CheckInOpensAt", d.CheckInOpensAt);
         p.Add("CheckInClosesAt", d.CheckInClosesAt);
         p.Add("Cancelled", d.Cancelled);
+        p.Add("Debug", d.Debug);
+        p.Add("KioskOrientation", d.KioskOrientation);
         return p;
     }
 }

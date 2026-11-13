@@ -39,6 +39,7 @@ public static class AdminApi
                 r.StartsAt,
                 r.EndsAt,
                 r.Cancelled,
+                r.Debug,
                 r.AttendeeCount,
                 state = EventRules.StateOf(new EventRow
                 {

@@ -33,6 +33,10 @@ Reglas:
 - Un check-in por usuario y evento; repetirlo devuelve el primero (`firstTime: false`).
 - Autenticación del usuario: **pendiente**. Hoy el nombre, el usuario y la foto los manda la página, que los recibe
   del puente de la app (`me`). Cuando se agregue, el JID del token dirá contra qué entorno autenticar.
+- Cada evento define si la página muestra el botón de debug (`debug`, apagado por defecto) y cómo se ve el kiosco
+  (`kioskOrientation`): `auto` sigue a la pantalla, `landscape` horizontal, `portrait` vertical con la TV girada a la
+  derecha y `portrait-left` girada a la izquierda. El kiosco no lista asistentes: sólo muestra la bienvenida y el
+  contador.
 - Las escrituras del panel exigen `X-Events-Admin: 1`, para que otra web no use la sesión de Traefik del navegador.
 
 ## Variables

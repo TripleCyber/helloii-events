@@ -28,6 +28,8 @@ public sealed class EventViews(EventStore store, EventsOptions options)
             posters = posters.Select(p => new { url = options.MediaUrl(p.MediaId), width = p.Width, height = p.Height }),
             theme = JsonDocument.Parse(e.Theme).RootElement,
             cancelled = e.Cancelled,
+            debug = e.Debug,
+            kioskOrientation = e.KioskOrientation,
             attendeeCount = count,
             checkIn = new
             {
@@ -63,6 +65,8 @@ public sealed class EventViews(EventStore store, EventsOptions options)
             checkInOpensAt = e.CheckInOpensAt,
             checkInClosesAt = e.CheckInClosesAt,
             cancelled = e.Cancelled,
+            debug = e.Debug,
+            kioskOrientation = e.KioskOrientation,
             state = EventRules.StateOf(e, DateTime.UtcNow, false),
             organizer = new
             {

@@ -113,13 +113,7 @@ public static class PublicApi
         var client = new LiveClient(socket);
         using (hub.Join(code, client))
         {
-            var recent = await store.CheckInsAsync(e.Id, 12, ctx.RequestAborted);
-            await client.SendAsync(new
-            {
-                type = "hello",
-                @event = await views.PublicAsync(e, null, ctx.RequestAborted),
-                recent = recent.Select(EventViews.Attendee),
-            });
+            await client.SendAsync(new { type = "hello", @event = await views.PublicAsync(e, null, ctx.RequestAborted) });
             var buffer = new byte[1024];
             try
             {

@@ -17,6 +17,8 @@ public sealed class EventRow
     public bool Cancelled { get; set; }
     public string Theme { get; set; } = "{}";
     public string KioskToken { get; set; } = "";
+    public bool Debug { get; set; }
+    public string KioskOrientation { get; set; } = "auto";
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 }
@@ -48,6 +50,7 @@ public sealed class EventSummaryRow
     public DateTime CheckInOpensAt { get; set; }
     public DateTime CheckInClosesAt { get; set; }
     public bool Cancelled { get; set; }
+    public bool Debug { get; set; }
     public long AttendeeCount { get; set; }
 }
 
@@ -65,7 +68,9 @@ public sealed record EventInput(
     DateTimeOffset? CheckInClosesAt,
     bool Cancelled,
     ThemeInput? Theme,
-    List<PosterInput>? Posters);
+    List<PosterInput>? Posters,
+    bool Debug = false,
+    string? KioskOrientation = null);
 
 public sealed record OrganizerInput(string? Name, string? Color, Guid? LogoMediaId);
 
@@ -93,7 +98,9 @@ public sealed record EventDraft(
     DateTime CheckInClosesAt,
     bool Cancelled,
     ThemeValue Theme,
-    IReadOnlyList<PosterInput> Posters);
+    IReadOnlyList<PosterInput> Posters,
+    bool Debug,
+    string KioskOrientation);
 
 public sealed record CheckInInput(CheckInUser? User);
 

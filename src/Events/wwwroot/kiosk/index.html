@@ -8,43 +8,56 @@
 <link rel="stylesheet" href="/kiosk/assets/kiosk.css">
 </head>
 <body>
-<div class="bg" aria-hidden="true"><div class="glow glow--a"></div><div class="glow glow--b"></div></div>
+<div class="app" id="app">
+  <div class="backdrop" aria-hidden="true"><div class="backdrop-img" id="backdrop"></div><div class="glow glow--a"></div><div class="glow glow--b"></div></div>
 
-<main class="stage" id="stage" hidden>
-  <section class="event">
-    <div class="poster" id="poster"></div>
-    <div class="event-text">
+  <main class="stage" id="stage" hidden>
+    <section class="media">
+      <div class="poster" id="poster"></div>
+    </section>
+
+    <section class="info">
       <div class="org" id="org"><span class="org-logo" id="org-logo"></span><span id="org-name"></span></div>
-      <h1 id="title"></h1>
+      <h1 class="title" id="title"></h1>
       <p class="meta" id="when"></p>
-      <p class="meta" id="venue"></p>
-    </div>
-  </section>
+      <p class="meta meta--venue" id="venue"></p>
+    </section>
 
-  <section class="scan">
-    <div class="qr-card"><img id="qr" alt=""></div>
-    <h2 id="cta"></h2>
-    <p class="cta-sub" id="cta-sub"></p>
-    <div class="count" id="count" hidden><span class="dot"></span><span id="count-text"></span></div>
-  </section>
+    <section class="scan" id="scan">
+      <div class="qr-card" id="qr-card"><img id="qr" alt=""></div>
+      <div class="scan-text">
+        <p class="cta" id="cta"></p>
+        <p class="cta-sub" id="cta-sub"></p>
+        <p class="opens" id="opens" hidden></p>
+      </div>
+    </section>
 
-  <section class="faces" id="faces" aria-label="Últimas llegadas"></section>
-</main>
+    <section class="state" id="state" hidden>
+      <div class="state-icon" id="state-icon"></div>
+      <p class="state-title" id="state-title"></p>
+      <p class="state-sub" id="state-sub"></p>
+    </section>
 
-<div class="welcome" id="welcome" hidden aria-live="assertive">
-  <div class="confetti" id="confetti"></div>
-  <div class="welcome-face avatar" id="welcome-face"></div>
-  <p class="welcome-hi" id="welcome-hi"></p>
-  <p class="welcome-sub" id="welcome-sub"></p>
+    <section class="count" id="count" hidden>
+      <span class="count-num" id="count-num"></span>
+      <span class="count-label"><span class="dot" aria-hidden="true"></span><span id="count-label"></span></span>
+    </section>
+  </main>
+
+  <div class="welcome" id="welcome" hidden aria-live="assertive">
+    <div class="confetti" id="confetti"></div>
+    <div class="welcome-face avatar" id="welcome-face"></div>
+    <p class="welcome-hi" id="welcome-hi"></p>
+    <p class="welcome-sub" id="welcome-sub"></p>
+  </div>
+
+  <div class="notice" id="notice" hidden>
+    <p class="notice-title" id="notice-title"></p>
+    <p class="notice-sub" id="notice-sub"></p>
+  </div>
+
+  <div class="status" id="status"><span class="status-dot"></span><span id="status-text"></span></div>
 </div>
-
-<div class="notice" id="notice" hidden>
-  <h1 id="notice-title"></h1>
-  <p id="notice-sub"></p>
-</div>
-
-<div class="status" id="status"><span class="status-dot"></span><span id="status-text"></span></div>
-
 <script type="module" src="/kiosk/assets/kiosk.js"></script>
 </body>
 </html>

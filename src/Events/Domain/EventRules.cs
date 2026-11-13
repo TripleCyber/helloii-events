@@ -12,6 +12,7 @@ public static partial class EventRules
     public const string Cancelled = "cancelled";
 
     public const int MaxPosters = 8;
+    public static readonly string[] KioskOrientations = ["auto", "landscape", "portrait", "portrait-left"];
     public const int MaxPhotoBytes = 600 * 1024;
     public static readonly TimeSpan DefaultCheckInLead = TimeSpan.FromHours(1);
 
@@ -85,10 +86,13 @@ public static partial class EventRules
             if (poster.Width is < 1 or > 8192 || poster.Height is < 1 or > 8192) errors.Add("poster size out of range");
         }
 
+        var orientation = string.IsNullOrWhiteSpace(input.KioskOrientation) ? "auto" : input.KioskOrientation.Trim();
+        if (!KioskOrientations.Contains(orientation)) errors.Add("kioskOrientation must be auto, landscape, portrait or portrait-left");
+
         if (errors.Count == 0)
         {
             draft = new EventDraft(title, description, venue, organizerName, organizerColor, input.Organizer?.LogoMediaId,
-                starts, ends, opens, closes, input.Cancelled, themeValue, posters);
+                starts, ends, opens, closes, input.Cancelled, themeValue, posters, input.Debug, orientation);
         }
         return errors;
     }

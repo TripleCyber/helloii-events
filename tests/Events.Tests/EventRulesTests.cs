@@ -58,6 +58,21 @@ public class EventRulesTests
     }
 
     [Fact]
+    public void Debug_is_off_and_the_kiosk_follows_the_screen_unless_the_event_says_otherwise()
+    {
+        Assert.Empty(EventRules.Validate(Input(), out var draft));
+        Assert.False(draft!.Debug);
+        Assert.Equal("auto", draft.KioskOrientation);
+
+        Assert.Empty(EventRules.Validate(Input() with { Debug = true, KioskOrientation = "portrait-left" }, out draft));
+        Assert.True(draft!.Debug);
+        Assert.Equal("portrait-left", draft.KioskOrientation);
+
+        Assert.Contains("kioskOrientation must be auto, landscape, portrait or portrait-left",
+            EventRules.Validate(Input() with { KioskOrientation = "sideways" }, out _));
+    }
+
+    [Fact]
     public void Codes_are_random_and_valid()
     {
         var a = EventRules.NewCode();

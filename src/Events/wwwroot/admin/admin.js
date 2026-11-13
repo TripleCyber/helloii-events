@@ -79,7 +79,8 @@ async function renderList() {
   for (const e of events) {
     list.append(h('div', { class: 'card' },
       h('div', { class: 'card-main' },
-        h('div', { class: 'card-title' }, e.title, ' ', h('span', { class: `chip ${e.state}` }, STATES[e.state] || e.state)),
+        h('div', { class: 'card-title' }, e.title, ' ', h('span', { class: `chip ${e.state}` }, STATES[e.state] || e.state),
+          e.debug ? h('span', { class: 'chip' }, 'debug') : null),
         h('div', { class: 'card-meta' }, `${fmt(e.startsAt)} → ${fmt(e.endsAt)} · ${e.code}`)),
       h('div', { class: 'card-count' }, h('strong', {}, e.attendeeCount), h('span', { class: 'sub' }, 'asistentes')),
       h('div', { class: 'card-actions' },
@@ -102,6 +103,7 @@ function blankEvent() {
     organizer: { name: '', color: '#0F1E29', logoMediaId: null, logoUrl: null },
     startsAt: start.toISOString(), endsAt: end.toISOString(), checkInOpensAt: null, checkInClosesAt: null,
     cancelled: false, theme: structuredClone(DEFAULT_THEME), posters: [],
+    debug: false, kioskOrientation: 'auto',
   };
 }
 
@@ -215,7 +217,7 @@ async function renderEditor(code) {
       title: ev.title, description: ev.description, venue: ev.venue,
       organizer: { name: ev.organizer.name, color: ev.organizer.color, logoMediaId: ev.organizer.logoMediaId },
       startsAt: ev.startsAt, endsAt: ev.endsAt, checkInOpensAt: ev.checkInOpensAt, checkInClosesAt: ev.checkInClosesAt,
-      cancelled: ev.cancelled, theme: ev.theme,
+      cancelled: ev.cancelled, theme: ev.theme, debug: ev.debug, kioskOrientation: ev.kioskOrientation,
       posters: ev.posters.map((p) => ({ mediaId: p.mediaId, width: p.width, height: p.height })),
     };
     try {
@@ -261,6 +263,15 @@ async function renderEditor(code) {
         field('Color', color(() => ev.organizer.color, (v) => { ev.organizer.color = v; drawLogo(); }))),
       logoBox),
     h('section', { class: 'section' }, h('h2', {}, 'Pósters'), h('span', { class: 'hint' }, 'Caja 4:5. Más alto se recorta abajo; más ancho entra completo sobre el mismo difuminado. Hasta 8, máximo 2 MB.'), postersBox),
+    h('section', { class: 'section' }, h('h2', {}, 'Pantalla del evento (kiosco)'),
+      field('Orientación', h('select', { onchange: (e) => { ev.kioskOrientation = e.target.value; } },
+        [['auto', 'Automática (según la pantalla)'], ['landscape', 'Horizontal'], ['portrait', 'Vertical: TV girada a la derecha'], ['portrait-left', 'Vertical: TV girada a la izquierda']].map(([value, text]) =>
+          h('option', { value, selected: ev.kioskOrientation === value }, text))),
+        'Automática sirve para cualquier TV o tablet. Si la TV está montada de lado y la imagen no gira sola, elige hacia qué lado se giró.')),
+    h('section', { class: 'section' }, h('h2', {}, 'Pruebas'),
+      h('label', { class: 'check' }, h('input', { type: 'checkbox', checked: ev.debug, onchange: (e) => { ev.debug = e.target.checked; } }),
+        'Modo debug en la página del evento'),
+      h('span', { class: 'hint' }, 'Muestra el botón para simular estados y errores en el teléfono. Apágalo para el evento real.')),
     h('section', { class: 'section' }, h('h2', {}, 'Colores'),
       h('div', { class: 'presets' }, PRESETS.map(([name, p]) => h('button', { class: 'btn btn-sm preset', onclick: () => { ev.theme = structuredClone(p); renderColors(); preview(); } },
         h('span', { class: 'swatch', style: `background:${p.background}` }), h('span', { class: 'swatch', style: `background:${p.accent}` }), name))),
