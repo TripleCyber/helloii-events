@@ -320,7 +320,13 @@ async function renderAttendance(code) {
     h('td', {}, h('span', { class: 'avatar' }, r.hasPhoto ? h('img', { src: `api/admin/events/${encodeURIComponent(code)}/attendees/${r.id}/photo`, alt: '' }) : initials(r.displayName))),
     h('td', {}, h('strong', {}, r.displayName), h('div', { class: 'sub' }, r.firstName)),
     h('td', { class: 'sub' }, r.username),
-    h('td', {}, fmt(r.checkedInAt)))));
+    h('td', {}, fmt(r.checkedInAt)),
+    h('td', {}, h('button', { class: 'btn btn-sm btn-danger', onclick: async () => {
+      if (!confirm(`¿Quitar a ${r.displayName}? Podrá volver a hacer check-in.`)) return;
+      await api(`/events/${encodeURIComponent(code)}/attendees/${r.id}`, { method: 'DELETE' });
+      toast('Asistente quitado');
+      renderAttendance(code);
+    } }, 'Quitar')))));
   fill(view, 
     h('div', { class: 'page-head' },
       h('div', {}, h('h1', {}, `Asistencia · ${ev.title}`), h('span', { class: 'sub' }, 'Se actualiza sola cada 10 segundos.')),
@@ -330,7 +336,7 @@ async function renderAttendance(code) {
     h('div', { class: 'section' },
       h('div', {}, h('span', { class: 'big' }, rows.length), ' ', h('span', { class: 'sub' }, rows.length === 1 ? 'persona' : 'personas')),
       rows.length
-        ? h('table', {}, h('thead', {}, h('tr', {}, h('th', {}, ''), h('th', {}, 'Nombre'), h('th', {}, 'Usuario'), h('th', {}, 'Llegó'))), body)
+        ? h('table', {}, h('thead', {}, h('tr', {}, h('th', {}, ''), h('th', {}, 'Nombre'), h('th', {}, 'Usuario'), h('th', {}, 'Llegó'), h('th', {}, ''))), body)
         : h('div', { class: 'empty' }, 'Todavía no hay check-ins.')));
   refreshTimer = setTimeout(() => location.hash.endsWith('/asistencia') && renderAttendance(code), 10000);
 }

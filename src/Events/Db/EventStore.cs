@@ -98,6 +98,19 @@ public sealed class EventStore(Database db)
         return (row, true);
     }
 
+    public async Task<bool> RemoveCheckInAsync(Guid eventId, string code, long id, CancellationToken ct = default)
+    {
+        await using var conn = await db.OpenAsync(ct);
+        await using var tx = await conn.BeginTransactionAsync(ct);
+        var removed = await conn.QuerySingleOrDefaultAsync<CheckInRow>(
+            "delete from check_ins where event_id = @eventId and id = @id returning id, photo", new { eventId, id }, tx);
+        if (removed is null) return false;
+        if (removed.Photo is Guid media) await conn.ExecuteAsync("delete from media where id = @media", new { media }, tx);
+        await NotifyAsync(conn, tx, code, "event", null);
+        await tx.CommitAsync(ct);
+        return true;
+    }
+
     public async Task<MediaRow?> MediaAsync(Guid id, CancellationToken ct = default)
     {
         await using var conn = await db.OpenAsync(ct);

@@ -125,6 +125,12 @@ public static class AdminApi
                 "text/csv; charset=utf-8", $"asistencia-{code}.csv");
         });
 
+        // Lets a test phone check in again; the kiosk count follows.
+        admin.MapDelete("/events/{code}/attendees/{id:long}", async (string code, long id, EventStore store, CancellationToken ct) =>
+            await store.GetAsync(code, ct) is { } e && await store.RemoveCheckInAsync(e.Id, code, id, ct)
+                ? Results.NoContent()
+                : Results.NotFound());
+
         admin.MapGet("/events/{code}/attendees/{id:long}/photo", async (string code, long id, EventStore store, CancellationToken ct) =>
         {
             if (await store.GetAsync(code, ct) is not { } e) return Results.NotFound();
