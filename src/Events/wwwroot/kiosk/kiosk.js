@@ -344,7 +344,7 @@ async function showNext() {
   showing = true;
   const attendee = queue.shift();
   const face = $('welcome-face');
-  // Modificado por Yerardy Castillo: nombre completo y foto circular con regreso automático a los 3 segundos.
+  // Modificado por Yerardy Castillo: nombre completo y foto circular con regreso automático a los 5 segundos.
   const name = attendee.displayName || attendee.firstName || '';
   face.textContent = initialsOf(name);
   $('welcome-hi').textContent = t('hi', { name });
@@ -363,8 +363,8 @@ async function showNext() {
     if (photo.complete && photo.naturalWidth > 0) face.replaceChildren(photo);
   });
   try {
-    // Modificado por Yerardy Castillo: incluir la salida suave dentro de los 3 segundos totales.
-    await new Promise((r) => setTimeout(r, 2550));
+    // Modificado por Yerardy Castillo: incluir la salida suave dentro de los 5 segundos totales.
+    await new Promise((r) => setTimeout(r, 4550));
     welcome.classList.add('out');
     await new Promise((r) => setTimeout(r, 450));
   } finally {

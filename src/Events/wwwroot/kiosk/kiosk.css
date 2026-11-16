@@ -1,5 +1,13 @@
 *, *::before, *::after { box-sizing: border-box; }
 [hidden] { display: none !important; }
+/* Modificado por Yerardy Castillo: letras redondas incorporadas para conservar el estilo en Android. */
+@font-face {
+  font-family: 'Helloii Rounded';
+  src: url('/kiosk/assets/helloii-rounded.ttf') format('truetype');
+  font-weight: 300 700;
+  font-style: normal;
+  font-display: swap;
+}
 
 :root {
   --bg: #06090F;
@@ -230,6 +238,10 @@ h1 { margin: 0; }
 }
 .welcome-hi { -webkit-text-stroke-width: 1.2px; }
 .welcome-sub { -webkit-text-stroke-width: 1px; }
+/* Modificado por Yerardy Castillo: entrada inmediata; conservar únicamente la salida suave hacia el QR. */
+.welcome, .welcome-face, .welcome-face img, .welcome-hi, .welcome-sub { animation: none; }
+.welcome-sub { font-family: 'Helloii Rounded', sans-serif; font-weight: 700; letter-spacing: 0; transform: none; }
+.welcome.out { animation: fade-out .45s ease-in both; }
 @keyframes welcome-bounce {
   from { opacity: 0; transform: translateY(calc(var(--u) * 3)) rotate(-5deg) scale(.8); }
   65% { opacity: 1; transform: rotate(1deg) scale(1.04); }
