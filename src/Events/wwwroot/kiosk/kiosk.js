@@ -2,6 +2,7 @@ const STRINGS = {
   es: {
     cta: 'Escanea con la cámara y toca «Aquí estoy»',
     ctaSub: 'Se abre Helloii con el evento.',
+    download: 'Descarga Helloii',
     opensOn: 'El check-in abre el {day} a las {time}',
     opensToday: 'El check-in abre hoy a las {time}',
     hereOne: 'persona ya está aquí',
@@ -26,6 +27,7 @@ const STRINGS = {
     // Modificado por Yerardy Castillo: simplificar la indicación para escanear el QR.
     cta: 'Scan the QR code with your camera',
     ctaSub: 'Helloii opens with the event.',
+    download: 'Download Helloii',
     opensOn: 'Check-in opens on {day} at {time}',
     opensToday: 'Check-in opens today at {time}',
     hereOne: 'person is already here',
@@ -73,6 +75,8 @@ let stateTimer = 0;
 document.documentElement.lang = LANG;
 $('cta').textContent = t('cta');
 $('cta-sub').textContent = t('ctaSub');
+// Modificado por Yerardy Castillo: indicar disponibilidad para iPhone y Android.
+$('download-label').textContent = t('download');
 
 // The event may fix the orientation; a sideways TV then gets the page turned 90°.
 function layout() {

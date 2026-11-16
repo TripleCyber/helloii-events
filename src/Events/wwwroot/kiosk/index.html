@@ -9,7 +9,8 @@
 </head>
 <body>
 <div class="app" id="app">
-  <div class="backdrop" aria-hidden="true"><div class="backdrop-img" id="backdrop"></div><div class="glow glow--a"></div><div class="glow glow--b"></div></div>
+  <!-- Modificado por Yerardy Castillo: logo de Helloii como fondo de la pantalla. -->
+  <div class="backdrop" aria-hidden="true"><div class="backdrop-img" id="backdrop"></div><div class="glow glow--a"></div><div class="glow glow--b"></div><div class="brand-backdrop"></div></div>
 
   <main class="stage" id="stage" hidden>
     <section class="media">
@@ -28,6 +29,14 @@
       <div class="scan-text">
         <p class="cta" id="cta"></p>
         <p class="cta-sub" id="cta-sub"></p>
+        <!-- Modificado por Yerardy Castillo: disponibilidad de descarga para ambas plataformas. -->
+        <div class="downloads">
+          <p id="download-label"></p>
+          <div class="platforms">
+            <span class="platform"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.5 5.5c1.2-1.3 1.2-3 1.2-3s-1.8.1-3 1.4c-1 1.1-1.1 2.6-1.1 2.6s1.6.2 2.9-1zM18.7 12.7c0-2 1.6-3 1.7-3.1-1-1.5-2.6-1.7-3.2-1.7-1.4-.2-2.8.9-3.5.9s-1.8-.9-3-.9C8.3 7.9 6 10 6 13.5c0 2.1.8 4.3 1.8 5.8.8 1.2 1.7 2.6 3 2.5 1.2 0 1.7-.8 3.2-.8s1.9.8 3.2.8c1.4 0 2.2-1.3 3-2.5.8-1.2 1.1-2.3 1.2-2.4-.1 0-2.7-1.1-2.7-4.2z"/></svg>iPhone</span>
+            <span class="platform"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6.4 3.5 1.2-.7 1.7 2.8a9 9 0 0 1 5.4 0l1.7-2.8 1.2.7L16 6.3A7.6 7.6 0 0 1 20 13H4a7.6 7.6 0 0 1 4-6.7zM4 14h16v5a2 2 0 0 1-2 2h-1v2h-3v-2h-4v2H7v-2H6a2 2 0 0 1-2-2z"/><circle cx="8.5" cy="9.5" r="1" class="platform-eye"/><circle cx="15.5" cy="9.5" r="1" class="platform-eye"/></svg>Android</span>
+          </div>
+        </div>
         <p class="opens" id="opens" hidden></p>
       </div>
     </section>
