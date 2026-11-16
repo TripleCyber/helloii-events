@@ -75,8 +75,12 @@ public static class PublicApi
         });
 
         var kioskPage = Path.Combine(app.Environment.WebRootPath, "kiosk", "index.html");
-        app.MapGet("/kiosk/{code}", (string code) =>
-            EventRules.IsCode(code) ? Results.File(kioskPage, "text/html; charset=utf-8") : Results.NotFound());
+        app.MapGet("/kiosk/{code}", (string code, HttpResponse response) =>
+        {
+            // Modificado por Yerardy Castillo: evitar una página antigua guardada en el navegador Android.
+            response.Headers.CacheControl = "no-store, no-cache, must-revalidate";
+            return EventRules.IsCode(code) ? Results.File(kioskPage, "text/html; charset=utf-8") : Results.NotFound();
+        });
     }
 
     private static async Task LiveAsync(HttpContext ctx, string code, EventStore store, EventViews views, LiveHub hub)
