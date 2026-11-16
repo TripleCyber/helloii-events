@@ -125,6 +125,19 @@ public class ImagesTests
     }
 
     [Fact]
+    // Modificado por Yerardy Castillo: comprobar que GIF sólo se admite al habilitarlo para pósters.
+    public void Gif_requires_explicit_support_and_a_valid_header()
+    {
+        var gif = Convert.FromBase64String("R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7");
+        Assert.Equal("image/gif", Images.Sniff(gif, allowGif: true));
+        Assert.Null(Images.Sniff(gif));
+        Assert.Null(Images.Sniff("GIF89a"u8, allowGif: true));
+        Assert.Null(Images.Sniff("GIF89a\0\0\0\0\0\0\0"u8, allowGif: true));
+        Assert.Equal("image/png", Images.Sniff(Png, allowGif: true));
+        Assert.False(Images.TryReadDataUrl("data:image/gif;base64," + Convert.ToBase64String(gif), 1024, out _, out _));
+    }
+
+    [Fact]
     public void Data_urls_are_checked_and_capped()
     {
         Assert.True(Images.TryReadDataUrl("data:image/png;base64," + Convert.ToBase64String(Png), 1024, out var bytes, out var type));
