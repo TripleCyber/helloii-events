@@ -24,7 +24,7 @@ const STRINGS = {
   },
   en: {
     // Modificado por Yerardy Castillo: simplificar la indicación para escanear el QR.
-    cta: 'Scan with your camera',
+    cta: 'Scan the QR code with your camera',
     ctaSub: 'Helloii opens with the event.',
     opensOn: 'Check-in opens on {day} at {time}',
     opensToday: 'Check-in opens today at {time}',
