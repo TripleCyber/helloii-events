@@ -212,16 +212,22 @@ h1 { margin: 0; }
 /* Modificado por Yerardy Castillo: foto grande con borde rojo para cada nuevo check-in. */
 .welcome-face { flex: none; width: var(--welcome-face-size); height: var(--welcome-face-size); border: calc(var(--u) * .65) solid #FF3B3B; font-size: calc(var(--u) * 13); box-shadow: 0 0 0 calc(var(--u) * .5) rgba(255, 59, 59, .18), 0 calc(var(--u) * 3) calc(var(--u) * 10) rgba(0, 0, 0, .55); animation: pop .6s cubic-bezier(.2, .8, .2, 1) both; }
 .welcome-hi { max-width: 100%; font-size: var(--welcome-name-size); line-height: 1.02; font-weight: 800; letter-spacing: -.03em; text-wrap: balance; overflow-wrap: anywhere; animation: rise .55s .15s cubic-bezier(.2, .8, .2, 1) both; }
-.welcome-sub { font-size: calc(var(--u) * 3.4); color: rgba(255, 255, 255, .85); text-wrap: balance; animation: rise .55s .28s cubic-bezier(.2, .8, .2, 1) both; }
+.welcome-sub { max-width: 100%; font-size: calc(var(--welcome-name-size) * .78); font-family: 'Comic Sans MS', 'Chalkboard SE', cursive; font-weight: 900; line-height: 1.12; letter-spacing: .015em; text-wrap: balance; overflow-wrap: anywhere; transform: rotate(-2deg); animation: welcome-bounce .65s .18s cubic-bezier(.2, .8, .2, 1) both; }
 .welcome-event { max-width: 100%; font-size: calc(var(--u) * 2.6); color: rgba(255, 255, 255, .65); text-align: center; overflow-wrap: anywhere; }
-/* Modificado por Yerardy Castillo: borde oscuro legible y celebración detrás de la foto y el nombre. */
+/* Modificado por Yerardy Castillo: contorno azul y bienvenida grande con letras alegres. */
 .welcome-hi, .welcome-sub, .welcome-event {
   color: #fff;
-  -webkit-text-stroke: .7px #101820;
+  -webkit-text-stroke: .7px #1261D8;
   paint-order: stroke fill;
-  text-shadow: -1px -1px 0 #101820, 1px -1px 0 #101820, -1px 1px 0 #101820, 1px 1px 0 #101820, 0 3px 8px #000;
+  text-shadow: -1px -1px 0 #1261D8, 1px -1px 0 #1261D8, -1px 1px 0 #1261D8, 1px 1px 0 #1261D8, 0 3px 0 #083B8C, 0 5px 10px rgba(0, 0, 0, .8);
 }
 .welcome-hi { -webkit-text-stroke-width: 1.2px; }
+.welcome-sub { -webkit-text-stroke-width: 1px; }
+@keyframes welcome-bounce {
+  from { opacity: 0; transform: translateY(calc(var(--u) * 3)) rotate(-5deg) scale(.8); }
+  65% { opacity: 1; transform: rotate(1deg) scale(1.04); }
+  to { opacity: 1; transform: rotate(-2deg) scale(1); }
+}
 .welcome > :not(.confetti) { position: relative; z-index: 1; }
 .confetti { position: absolute; top: 0; right: 0; bottom: 0; left: 0; overflow: hidden; pointer-events: none; }
 .cf { position: absolute; width: calc(var(--u) * .7); height: calc(var(--u) * 1.7); border-radius: 50%; background: var(--c); box-shadow: 0 0 5px var(--c); animation: burst 1.15s cubic-bezier(.16, .7, .3, 1) var(--d) both; }
