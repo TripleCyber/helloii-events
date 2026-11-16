@@ -59,10 +59,11 @@ h1 { margin: 0; }
 .poster {
   position: relative;
   aspect-ratio: var(--pa, 4 / 5);
-  border-radius: calc(var(--u) * 2.4);
-  overflow: hidden;
-  background: var(--org);
-  box-shadow: 0 calc(var(--u) * 3) calc(var(--u) * 9) rgba(0, 0, 0, .5);
+  /* Modificado por Yerardy Castillo: dejar el muñeco transparente flotando sin cuadro. */
+  border-radius: 0;
+  overflow: visible;
+  background: transparent;
+  box-shadow: none;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -72,6 +73,10 @@ h1 { margin: 0; }
 .poster .fill { inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top center; }
 .poster .blur { inset: -10%; top: -10%; left: -10%; width: 120%; height: 120%; object-fit: cover; filter: blur(30px) brightness(.7); }
 .poster .fit { inset: 0; width: 100%; height: 100%; object-fit: contain; }
+/* Modificado por Yerardy Castillo: movimiento suave sin desplazar el QR ni el contenido. */
+.poster .fit { animation: mascot-float 5s ease-in-out infinite; }
+@keyframes mascot-float { 50% { transform: translateY(calc(var(--u) * -1)); } }
+@media (prefers-reduced-motion: reduce) { .poster .fit { animation: none; } }
 .poster-initials { font-size: calc(var(--u) * 14); font-weight: 800; color: var(--accent); }
 
 .org {
@@ -105,7 +110,9 @@ h1 { margin: 0; }
 
 .qr-card { flex: none; padding: calc(var(--u) * 1.6); border-radius: calc(var(--u) * 2.6); background: #fff; border: 1px solid rgba(255, 255, 255, .8); box-shadow: 0 calc(var(--u) * 2) calc(var(--u) * 6) rgba(0, 0, 0, .5), 0 0 calc(var(--u) * 4) rgba(82, 235, 164, .12); }
 .qr-card img { display: block; width: 100%; height: 100%; }
-.scan-text { display: flex; flex-direction: column; gap: calc(var(--u) * 1.2); min-width: 0; padding: calc(var(--u) * 2); border: 1px solid rgba(180, 242, 217, .14); border-radius: calc(var(--u) * 2); background: rgba(6, 15, 20, .88); box-shadow: 0 calc(var(--u) * 1) calc(var(--u) * 4) rgba(0, 0, 0, .16); }
+/* Modificado por Yerardy Castillo: panel de cristal ligero en lugar del bloque negro. */
+.scan-text { display: flex; flex-direction: column; gap: calc(var(--u) * 1.2); min-width: 0; padding: calc(var(--u) * 2.4); border: 1px solid rgba(205, 255, 233, .25); border-radius: calc(var(--u) * 3); background: linear-gradient(135deg, rgba(210, 255, 238, .13), rgba(91, 180, 171, .06)); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .15), 0 8px 24px rgba(0, 0, 0, .1); text-shadow: 0 2px 5px rgba(0, 0, 0, .65); }
+.scan-text .platform { text-shadow: none; border-radius: 999px; }
 .cta { font-weight: 700; line-height: 1.15; text-wrap: balance; }
 .cta-sub { color: rgba(255, 255, 255, .7); text-wrap: balance; }
 /* Modificado por Yerardy Castillo: iconos de plataformas legibles sobre cualquier fondo. */

@@ -72,6 +72,39 @@ let showing = false;
 let retry = 0;
 let stateTimer = 0;
 
+// Modificado por Yerardy Castillo: detectar despliegues sin cambiar el enlace ni interrumpir una bienvenida.
+const loadedVersion = document.querySelector('meta[name="helloii-kiosk-version"]')?.content;
+let checkingVersion = false;
+let newerVersion = false;
+async function checkVersion() {
+  if (!loadedVersion || checkingVersion || document.hidden) return;
+  if (newerVersion) {
+    if (!showing && !queue.length) location.reload();
+    return;
+  }
+  checkingVersion = true;
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 5000);
+  try {
+    const response = await fetch(location.pathname + location.search, { cache: 'no-store', signal: controller.signal });
+    if (!response.ok) return;
+    const page = new DOMParser().parseFromString(await response.text(), 'text/html');
+    const version = page.querySelector('meta[name="helloii-kiosk-version"]')?.content;
+    if (version && version !== loadedVersion) {
+      newerVersion = true;
+      if (!showing && !queue.length) location.reload();
+    }
+  } catch (_) {
+    // Una comprobación sin conexión no debe interrumpir el QR ni los check-ins.
+  } finally {
+    clearTimeout(timeout);
+    checkingVersion = false;
+  }
+}
+setInterval(checkVersion, 60000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) checkVersion(); });
+window.addEventListener('focus', checkVersion);
+
 document.documentElement.lang = LANG;
 $('cta').textContent = t('cta');
 $('cta-sub').textContent = t('ctaSub');
@@ -181,8 +214,8 @@ function renderPoster() {
     else box.append(Object.assign(document.createElement('span'), { className: 'poster-initials', textContent: initialsOf(event.organizer?.name || event.title) }));
     return;
   }
-  if (Math.abs(ratio - shown) > 0.01) box.append(image(first.url, 'blur'), image(first.url, 'fit'));
-  else box.append(image(first.url, 'fill'));
+  // Modificado por Yerardy Castillo: conservar la transparencia del póster sin una copia difuminada detrás.
+  box.append(image(first.url, 'fit'));
 }
 
 function whenText() {
