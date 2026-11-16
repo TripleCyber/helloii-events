@@ -96,8 +96,9 @@ public static class AdminApi
             await req.Body.CopyToAsync(buffer, ct);
             if (buffer.Length > max) return Results.StatusCode(StatusCodes.Status413PayloadTooLarge);
             var bytes = buffer.ToArray();
-            var type = Images.Sniff(bytes);
-            if (type is null) return Results.BadRequest(new { errors = new[] { "only JPG, PNG or WebP" } });
+            // Modificado por Yerardy Castillo: permitir GIF en pósters manteniendo el límite de tamaño.
+            var type = Images.Sniff(bytes, allowGif: kind == "poster");
+            if (type is null) return Results.BadRequest(new { errors = new[] { kind == "poster" ? "only JPG, PNG, WebP or GIF" : "only JPG, PNG or WebP" } });
             var id = await store.AddMediaAsync(kind, type, bytes, ct);
             return Results.Ok(new { mediaId = id, url = options.MediaUrl(id) });
         });
