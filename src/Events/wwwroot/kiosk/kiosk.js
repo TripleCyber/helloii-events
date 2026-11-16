@@ -78,6 +78,14 @@ $('cta-sub').textContent = t('ctaSub');
 // Modificado por Yerardy Castillo: indicar disponibilidad para iPhone y Android.
 $('download-label').textContent = t('download');
 
+// Modificado por Yerardy Castillo: detectar espacios flex que algunos WebView Android ignoran.
+const gapProbe = document.createElement('div');
+gapProbe.style.cssText = 'position:absolute;left:-9999px;display:flex;flex-direction:column;row-gap:1px;';
+gapProbe.append(document.createElement('div'), document.createElement('div'));
+document.body.append(gapProbe);
+if (gapProbe.scrollHeight !== 1) document.documentElement.classList.add('no-flex-gap');
+gapProbe.remove();
+
 // The event may fix the orientation; a sideways TV then gets the page turned 90°.
 function layout() {
   const app = $('app');
@@ -91,6 +99,21 @@ function layout() {
   const h = rotated ? innerWidth : innerHeight;
   app.style.setProperty('--w', `${w / 100}px`);
   app.style.setProperty('--h', `${h / 100}px`);
+  // Modificado por Yerardy Castillo: calcular medidas sin depender de min() en CSS de Android.
+  app.style.setProperty('--u', `${Math.min(w, h) / 100}px`);
+  const portrait = wanted === 'portrait';
+  const sizes = {
+    'title-size': portrait ? Math.min(w * .076, h * .042) : Math.min(w * .044, h * .076),
+    'meta-size': portrait ? Math.min(w * .034, h * .019) : Math.min(w * .018, h * .031),
+    'qr-size': portrait ? Math.min(w * .46, h * .20) : Math.min(w * .22, h * .40),
+    'cta-size': portrait ? Math.min(w * .048, h * .027) : Math.min(w * .022, h * .038),
+    'sub-size': portrait ? Math.min(w * .030, h * .017) : Math.min(w * .014, h * .025),
+    'state-title-size': portrait ? Math.min(w * .070, h * .040) : Math.min(w * .036, h * .064),
+    'state-sub-size': portrait ? Math.min(w * .034, h * .019) : Math.min(w * .016, h * .028),
+    'count-size': portrait ? Math.min(w * .120, h * .058) : Math.min(w * .050, h * .085),
+    'count-label-size': portrait ? Math.min(w * .034, h * .019) : Math.min(w * .016, h * .028),
+  };
+  for (const [name, size] of Object.entries(sizes)) app.style.setProperty(`--${name}`, `${size}px`);
   app.classList.toggle('landscape', wanted === 'landscape');
   app.classList.toggle('portrait', wanted === 'portrait');
   app.classList.toggle('rotated', rotated);
@@ -106,6 +129,7 @@ function layout() {
   poster.style.height = `${posterWidth / ratio}px`;
 }
 addEventListener('resize', layout);
+addEventListener('orientationchange', layout);
 layout();
 
 function notice(title, sub) {
