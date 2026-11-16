@@ -310,6 +310,46 @@ async function renderEditor(code) {
       field('Texto del botón', color(() => t.buttonText, (v) => (t.buttonText = v)))));
   }
 
+  const attendanceLink = h('a', { class: 'btn btn-sm', href: `#/evento/${ev.code}/asistencia` }, `Asistencia (${ev.attendeeCount || 0})`);
+  // Modificado por Yerardy Castillo: gestionar la asistencia desde el formulario sin guardar ni borrar el evento.
+  const clearAttendanceButton = h('button', { type: 'button', class: 'btn btn-sm btn-danger', onclick: async () => {
+    clearAttendanceButton.disabled = true;
+    clearAttendanceButton.textContent = 'Revisando…';
+    const eventPath = `/events/${encodeURIComponent(code)}`;
+    let removed = 0;
+    let started = false;
+    let failures = [];
+    try {
+      const rows = await api(`${eventPath}/attendance`);
+      attendanceLink.textContent = `Asistencia (${rows.length})`;
+      if (!rows.length) { toast('No hay asistencia registrada'); return; }
+      if (!confirm(`¿Borrar los ${rows.length} registros de asistencia de «${ev.title}»? Se eliminarán sus registros y fotos de este evento. No se puede deshacer. Las personas podrán volver a hacer check-in.`)) return;
+      started = true;
+      clearAttendanceButton.textContent = 'Borrando…';
+      // La lista queda fijada al confirmar: los registros nuevos no se incluyen en esta operación.
+      for (const row of rows) {
+        await api(`${eventPath}/attendees/${row.id}`, { method: 'DELETE' });
+        removed++;
+      }
+      toast(`${removed} registros de asistencia borrados`);
+    } catch (err) {
+      failures = [...(started ? [`Se borraron ${removed} registros antes del error.`] : []), ...(err.errors || ['No se pudo borrar la asistencia.'])];
+    } finally {
+      if (started) {
+        try {
+          const remaining = await api(`${eventPath}/attendance`);
+          ev.attendeeCount = remaining.length;
+          attendanceLink.textContent = `Asistencia (${remaining.length})`;
+        } catch (_) {
+          failures.push('No se pudo actualizar el conteo. Recarga para ver la asistencia actual.');
+        }
+      }
+      if (failures.length) showErrors(failures);
+      clearAttendanceButton.disabled = false;
+      clearAttendanceButton.textContent = 'Borrar asistencia';
+    }
+  } }, 'Borrar asistencia');
+
   const share = creating ? null : h('section', { class: 'section share' }, h('h2', {}, 'Compartir'),
     h('div', { class: 'qr-box' },
       h('img', { src: `api/admin/events/${encodeURIComponent(ev.code)}/qr.svg`, alt: 'QR del evento' }),
@@ -326,7 +366,7 @@ async function renderEditor(code) {
           await api(`/events/${encodeURIComponent(code)}/kiosk-token`, { method: 'POST' });
           renderEditor(code);
         } }, 'Cambiar'))),
-    h('div', {}, h('a', { class: 'btn btn-sm', href: `#/evento/${ev.code}/asistencia` }, `Asistencia (${ev.attendeeCount})`)));
+    h('div', { class: 'card-actions' }, attendanceLink, clearAttendanceButton));
 
   if (share) form.insertBefore(share, form.children[1]);
   fill(view, 
