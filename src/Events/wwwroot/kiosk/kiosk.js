@@ -91,6 +91,15 @@ function layout() {
   app.classList.toggle('portrait', wanted === 'portrait');
   app.classList.toggle('rotated', rotated);
   app.classList.toggle('left', rotated && fixed === 'portrait-left');
+
+  // Modificado por Yerardy Castillo: reservar el tamaño del póster también en Android sin aspect-ratio.
+  const poster = $('poster');
+  const ratio = Number(poster.style.getPropertyValue('--pr')) || 0.8;
+  const posterWidth = wanted === 'portrait'
+    ? Math.min(w * 0.86, h * 0.27 * ratio)
+    : Math.min(w * (ratio > 1.2 ? 0.46 : 0.38), h * 0.84 * ratio);
+  poster.style.width = `${posterWidth}px`;
+  poster.style.height = `${posterWidth / ratio}px`;
 }
 addEventListener('resize', layout);
 layout();
@@ -135,6 +144,7 @@ function renderPoster() {
   box.style.setProperty('--pa', String(shown));
   box.style.setProperty('--pr', String(shown));
   $('app').classList.toggle('wide-media', shown > 1.2);
+  layout();
   if (!first) {
     const logo = event.organizer?.logoUrl;
     if (logo) box.append(image(logo, 'fit'));
