@@ -113,6 +113,13 @@ input:focus, textarea:focus { outline: 2px solid rgba(134, 238, 96, 0.6); outlin
 .poster-item { position: relative; width: 104px; }
 .poster-item img { width: 104px; height: 130px; object-fit: cover; border-radius: 10px; display: block; background: #000; }
 .poster-item .row { display: flex; justify-content: space-between; margin-top: 6px; }
+/* Modificado por Yerardy Castillo: vista ampliada del póster con cierre accesible. */
+.poster-preview { display: block; padding: 0; border: 0; border-radius: 10px; background: none; cursor: zoom-in; }
+.poster-preview:focus-visible { outline: 2px solid var(--lime); outline-offset: 3px; }
+.poster-modal { max-width: 94vw; max-height: 94dvh; padding: 52px 12px 12px; border: 1px solid var(--line); border-radius: 14px; background: var(--panel); color: var(--text); }
+.poster-modal::backdrop { background: rgba(0, 0, 0, .85); }
+.poster-modal img { display: block; width: auto; height: auto; max-width: calc(94vw - 26px); max-height: calc(94dvh - 66px); object-fit: contain; margin: auto; }
+.poster-modal-close { position: absolute; top: 8px; right: 8px; width: 36px; height: 36px; padding: 0; }
 .upload { width: 104px; height: 130px; border-radius: 10px; border: 1px dashed rgba(255, 255, 255, 0.25); display: flex; align-items: center; justify-content: center; text-align: center; font-size: 13px; color: var(--muted); cursor: pointer; }
 .logo-row { display: flex; align-items: center; gap: 12px; }
 .logo { width: 48px; height: 48px; border-radius: 50%; overflow: hidden; background: var(--org, #0F1E29); display: flex; align-items: center; justify-content: center; font-weight: 800; color: var(--lime); }

@@ -92,6 +92,21 @@ async function renderList() {
 
 // ---------- Editor ----------
 
+// Modificado por Yerardy Castillo: ampliar el póster sin modificar los datos del evento.
+function openPoster(url, description) {
+  const dialog = h('dialog', { class: 'poster-modal', 'aria-label': description },
+    h('button', { type: 'button', class: 'btn poster-modal-close', 'aria-label': 'Cerrar imagen', onclick: () => dialog.close() }, '✕'),
+    h('img', { src: url, alt: description }));
+  dialog.addEventListener('click', (event) => {
+    if (event.target !== dialog) return;
+    const bounds = dialog.getBoundingClientRect();
+    if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) dialog.close();
+  });
+  dialog.addEventListener('close', () => dialog.remove(), { once: true });
+  document.body.append(dialog);
+  dialog.showModal();
+}
+
 function blankEvent() {
   const start = new Date();
   start.setDate(start.getDate() + 7);
@@ -140,7 +155,8 @@ async function renderEditor(code) {
   function drawPosters() {
     fill(postersBox, 
       ...ev.posters.map((p, i) => h('div', { class: 'poster-item' },
-        h('img', { src: p.url, alt: '' }),
+        h('button', { type: 'button', class: 'poster-preview', 'aria-label': `Ampliar póster ${i + 1}`, onclick: () => openPoster(p.url, `Póster ${i + 1} de ${ev.title || 'este evento'}`) },
+          h('img', { src: p.url, alt: '' })),
         h('div', { class: 'row' },
           h('button', { class: 'btn btn-sm', disabled: i === 0, onclick: () => { [ev.posters[i - 1], ev.posters[i]] = [ev.posters[i], ev.posters[i - 1]]; drawPosters(); preview(); } }, '←'),
           h('button', { class: 'btn btn-sm btn-danger', onclick: () => { ev.posters.splice(i, 1); drawPosters(); preview(); } }, '✕'),
