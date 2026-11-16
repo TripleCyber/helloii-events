@@ -348,7 +348,11 @@ async function showNext() {
   const name = attendee.displayName || attendee.firstName || '';
   face.textContent = initialsOf(name);
   $('welcome-hi').textContent = t('hi', { name });
-  $('welcome-sub').textContent = t('welcome');
+  // Modificado por Yerardy Castillo: usar el logo oficial de Helloii dentro de la bienvenida.
+  const welcomeWords = t('welcome').split('Helloii');
+  const welcomeLogo = image('/kiosk/assets/helloii-welcome-logo.png', 'welcome-wordmark');
+  welcomeLogo.alt = 'Helloii';
+  $('welcome-sub').replaceChildren(document.createTextNode(welcomeWords[0]), welcomeLogo, document.createTextNode(welcomeWords[1] || ''));
   $('welcome-event').textContent = event?.title || '';
   const welcome = $('welcome');
   welcome.classList.remove('out');

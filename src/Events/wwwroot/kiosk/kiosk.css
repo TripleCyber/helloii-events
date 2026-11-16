@@ -241,6 +241,8 @@ h1 { margin: 0; }
 /* Modificado por Yerardy Castillo: entrada inmediata; conservar únicamente la salida suave hacia el QR. */
 .welcome, .welcome-face, .welcome-face img, .welcome-hi, .welcome-sub { animation: none; }
 .welcome-sub { font-family: 'Helloii Rounded', sans-serif; font-weight: 700; letter-spacing: 0; transform: none; }
+/* Modificado por Yerardy Castillo: logo transparente con contorno azul, junto al texto de bienvenida. */
+.welcome-wordmark { display: inline-block; width: auto; height: 1.2em; max-width: 100%; object-fit: contain; vertical-align: -.2em; filter: drop-shadow(-1px 0 0 #1261D8) drop-shadow(1px 0 0 #1261D8) drop-shadow(0 1px 0 #1261D8); }
 .welcome.out { animation: fade-out .45s ease-in both; }
 @keyframes welcome-bounce {
   from { opacity: 0; transform: translateY(calc(var(--u) * 3)) rotate(-5deg) scale(.8); }
