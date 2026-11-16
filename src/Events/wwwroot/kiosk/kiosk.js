@@ -23,7 +23,8 @@ const STRINGS = {
     notFoundSub: 'Revisa el enlace del kiosco.',
   },
   en: {
-    cta: 'Scan with your camera and tap “I’m here”',
+    // Modificado por Yerardy Castillo: simplificar la indicación para escanear el QR.
+    cta: 'Scan with your camera',
     ctaSub: 'Helloii opens with the event.',
     opensOn: 'Check-in opens on {day} at {time}',
     opensToday: 'Check-in opens today at {time}',
