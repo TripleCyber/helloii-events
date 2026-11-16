@@ -10,7 +10,7 @@ const STRINGS = {
     cameOne: 'persona vino',
     cameMany: 'personas vinieron',
     hi: '¡Hola, {name}!',
-    welcome: 'Te damos la bienvenida a {title}',
+    welcome: '¡Te damos la bienvenida a Helloii!',
     live: 'En vivo',
     reconnecting: 'Reconectando…',
     closed: 'El check-in ya cerró',
@@ -35,7 +35,7 @@ const STRINGS = {
     cameOne: 'person came',
     cameMany: 'people came',
     hi: 'Hi, {name}!',
-    welcome: 'Welcome to {title}',
+    welcome: 'Welcome to Helloii!',
     live: 'Live',
     reconnecting: 'Reconnecting…',
     closed: 'Check-in is closed',
@@ -112,6 +112,8 @@ function layout() {
     'state-sub-size': portrait ? Math.min(w * .034, h * .019) : Math.min(w * .016, h * .028),
     'count-size': portrait ? Math.min(w * .120, h * .058) : Math.min(w * .050, h * .085),
     'count-label-size': portrait ? Math.min(w * .034, h * .019) : Math.min(w * .016, h * .028),
+    'welcome-face-size': Math.min(w * .56, h * .40),
+    'welcome-name-size': Math.min(w * .085, h * .075),
   };
   for (const [name, size] of Object.entries(sizes)) app.style.setProperty(`--${name}`, `${size}px`);
   app.classList.toggle('landscape', wanted === 'landscape');
@@ -265,9 +267,13 @@ async function photoOf(attendee) {
   if (!attendee.hasPhoto) return null;
   let url = photos.get(attendee.id);
   if (url) return url;
+  // Modificado por Yerardy Castillo: la foto no debe retrasar la bienvenida ni el regreso al QR.
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 2000);
   try {
     const res = await fetch(`/api/v1/events/${encodeURIComponent(code)}/attendees/${attendee.id}/photo`, {
       headers: { 'X-Kiosk-Token': token },
+      signal: controller.signal,
     });
     if (!res.ok) return null;
     url = URL.createObjectURL(await res.blob());
@@ -275,6 +281,8 @@ async function photoOf(attendee) {
     return url;
   } catch (_) {
     return null;
+  } finally {
+    clearTimeout(timeout);
   }
 }
 
@@ -297,22 +305,35 @@ async function showNext() {
   showing = true;
   const attendee = queue.shift();
   const face = $('welcome-face');
-  const photo = await photoOf(attendee);
-  face.replaceChildren();
-  if (photo) face.append(image(photo));
-  else face.textContent = initialsOf(attendee.displayName || attendee.firstName);
-  $('welcome-hi').textContent = t('hi', { name: attendee.firstName });
-  $('welcome-sub').textContent = t('welcome', { title: event ? event.title : '' });
+  // Modificado por Yerardy Castillo: nombre completo y foto circular con regreso automático a los 3 segundos.
+  const name = attendee.displayName || attendee.firstName || '';
+  face.textContent = initialsOf(name);
+  $('welcome-hi').textContent = t('hi', { name });
+  $('welcome-sub').textContent = t('welcome');
+  $('welcome-event').textContent = event?.title || '';
   const welcome = $('welcome');
   welcome.classList.remove('out');
   welcome.hidden = false;
   confetti();
-  await new Promise((r) => setTimeout(r, queue.length > 4 ? 1800 : queue.length > 1 ? 2800 : 4800));
-  welcome.classList.add('out');
-  await new Promise((r) => setTimeout(r, 450));
-  welcome.hidden = true;
-  showing = false;
-  showNext();
+  let active = true;
+  photoOf(attendee).then((url) => {
+    if (!url || !active) return;
+    const photo = image(url);
+    photo.alt = name;
+    photo.onload = () => { if (active) face.replaceChildren(photo); };
+    if (photo.complete && photo.naturalWidth > 0) face.replaceChildren(photo);
+  });
+  try {
+    // Modificado por Yerardy Castillo: incluir la salida suave dentro de los 3 segundos totales.
+    await new Promise((r) => setTimeout(r, 2550));
+    welcome.classList.add('out');
+    await new Promise((r) => setTimeout(r, 450));
+  } finally {
+    active = false;
+    welcome.hidden = true;
+    showing = false;
+    showNext();
+  }
 }
 
 function connect() {
