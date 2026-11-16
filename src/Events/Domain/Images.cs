@@ -3,8 +3,11 @@ namespace Events.Domain;
 public static class Images
 {
     /// <summary>The real type from the first bytes; never the one the client claims.</summary>
-    public static string? Sniff(ReadOnlySpan<byte> b)
+    public static string? Sniff(ReadOnlySpan<byte> b, bool allowGif = false)
     {
+        // Modificado por Yerardy Castillo: aceptar GIF animado sólo donde se permite explícitamente.
+        if (allowGif && b.Length >= 13 && (b.StartsWith("GIF87a"u8) || b.StartsWith("GIF89a"u8)) &&
+            (b[6] != 0 || b[7] != 0) && (b[8] != 0 || b[9] != 0)) return "image/gif";
         if (b.Length > 3 && b[0] == 0xFF && b[1] == 0xD8 && b[2] == 0xFF) return "image/jpeg";
         if (b.Length > 8 && b[0] == 0x89 && b[1] == 0x50 && b[2] == 0x4E && b[3] == 0x47) return "image/png";
         if (b.Length > 12 && b[0] == 0x52 && b[1] == 0x49 && b[2] == 0x46 && b[3] == 0x46 &&
