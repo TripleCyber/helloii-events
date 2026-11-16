@@ -289,15 +289,21 @@ async function photoOf(attendee) {
 function confetti() {
   const box = $('confetti');
   box.replaceChildren();
-  const colors = ['var(--accent)', '#FFFFFF', '#FBB03B', 'var(--glow)'];
-  for (let i = 0; i < 30; i++) {
-    const piece = document.createElement('i');
-    piece.className = 'cf';
-    const angle = (Math.PI * 2 * i) / 30;
-    const distance = 20 + Math.random() * 28;
-    piece.style.cssText = `--x:calc(var(--u) * ${Math.cos(angle) * distance});--y:calc(var(--u) * ${Math.sin(angle) * distance});--r:${Math.random() * 720 - 360}deg;--c:${colors[i % colors.length]};--d:${Math.random() * 0.2}s`;
-    box.appendChild(piece);
-  }
+  // Modificado por Yerardy Castillo: fuegos artificiales escalonados detrás de la bienvenida, aptos para Android.
+  const colors = ['#FF4B55', '#FFD65A', '#67F59B', '#6BDBFF', '#FFFFFF', '#E4A0FF'];
+  const origins = [[15, 18], [85, 23], [10, 65], [90, 70], [38, 10], [65, 85], [18, 88], [83, 43]];
+  const fragment = document.createDocumentFragment();
+  origins.forEach(([left, top], burst) => {
+    for (let i = 0; i < 24; i++) {
+      const piece = document.createElement('i');
+      piece.className = 'cf';
+      const angle = (Math.PI * 2 * i) / 24;
+      const distance = 12 + Math.random() * 15;
+      piece.style.cssText = `left:${left}%;top:${top}%;--x:calc(var(--u) * ${Math.cos(angle) * distance});--y:calc(var(--u) * ${Math.sin(angle) * distance});--c:${colors[burst % colors.length]};--d:${burst * .19}s`;
+      fragment.appendChild(piece);
+    }
+  });
+  box.appendChild(fragment);
 }
 
 async function showNext() {
@@ -331,6 +337,7 @@ async function showNext() {
   } finally {
     active = false;
     welcome.hidden = true;
+    $('confetti').replaceChildren();
     showing = false;
     showNext();
   }
