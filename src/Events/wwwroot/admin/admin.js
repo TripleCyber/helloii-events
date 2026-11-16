@@ -142,7 +142,9 @@ async function renderEditor(code) {
   };
 
   async function upload(kind, file) {
-    if (!/^image\/(jpeg|png|webp)$/.test(file.type)) throw Object.assign(new Error(), { errors: ['Sólo JPG, PNG o WebP'] });
+    // Modificado por Yerardy Castillo: cargar pósters GIF sin ampliar los formatos de los logos.
+    const supported = /^image\/(jpeg|png|webp)$/.test(file.type) || (kind === 'poster' && file.type === 'image/gif');
+    if (!supported) throw Object.assign(new Error(), { errors: [kind === 'poster' ? 'Sólo JPG, PNG, WebP o GIF' : 'Sólo JPG, PNG o WebP'] });
     if (file.size > MAX[kind]) throw Object.assign(new Error(), { errors: [`La imagen pesa más de ${MAX[kind] / 1024 / 1024} MB`] });
     const bitmap = await createImageBitmap(file);
     const size = { width: bitmap.width, height: bitmap.height };
@@ -162,7 +164,7 @@ async function renderEditor(code) {
           h('button', { class: 'btn btn-sm btn-danger', onclick: () => { ev.posters.splice(i, 1); drawPosters(); preview(); } }, '✕'),
           h('button', { class: 'btn btn-sm', disabled: i === ev.posters.length - 1, onclick: () => { [ev.posters[i + 1], ev.posters[i]] = [ev.posters[i], ev.posters[i + 1]]; drawPosters(); preview(); } }, '→')))),
       ev.posters.length < 8 ? h('label', { class: 'upload' }, 'Subir póster',
-        h('input', { type: 'file', accept: 'image/jpeg,image/png,image/webp', multiple: true, hidden: true, onchange: async (e) => {
+        h('input', { type: 'file', accept: 'image/jpeg,image/png,image/webp,image/gif', multiple: true, hidden: true, onchange: async (e) => {
           for (const file of e.target.files) {
             try {
               const p = await upload('poster', file);
@@ -278,7 +280,7 @@ async function renderEditor(code) {
         field('Nombre', text(ev.organizer.name, (v) => { ev.organizer.name = v; drawLogo(); }, { maxlength: 80 })),
         field('Color', color(() => ev.organizer.color, (v) => { ev.organizer.color = v; drawLogo(); }))),
       logoBox),
-    h('section', { class: 'section' }, h('h2', {}, 'Pósters'), h('span', { class: 'hint' }, 'Caja 4:5. Más alto se recorta abajo; más ancho entra completo sobre el mismo difuminado. Hasta 8, máximo 2 MB.'), postersBox),
+    h('section', { class: 'section' }, h('h2', {}, 'Pósters'), h('span', { class: 'hint' }, 'Caja 4:5. Más alto se recorta abajo; más ancho entra completo sobre el mismo difuminado. JPG, PNG, WebP o GIF animado. Hasta 8, máximo 2 MB.'), postersBox),
     h('section', { class: 'section' }, h('h2', {}, 'Pantalla del evento (kiosco)'),
       field('Orientación', h('select', { onchange: (e) => { ev.kioskOrientation = e.target.value; } },
         [['auto', 'Automática (según la pantalla)'], ['landscape', 'Horizontal'], ['portrait', 'Vertical: TV girada a la derecha'], ['portrait-left', 'Vertical: TV girada a la izquierda']].map(([value, text]) =>
