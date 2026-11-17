@@ -1,8 +1,9 @@
 const STRINGS = {
   es: {
     cta: 'Escanea con la cámara y toca «Aquí estoy»',
-    ctaSub: 'Se abre Helloii con el evento.',
-    download: 'Descarga Helloii',
+    // Modificado por Yerardy Castillo: evitar repetir el nombre de la marca en los textos pequeños.
+    ctaSub: 'La app se abre con el evento.',
+    download: 'Descarga la app',
     opensOn: 'El check-in abre el {day} a las {time}',
     opensToday: 'El check-in abre hoy a las {time}',
     hereOne: 'persona ya está aquí',
@@ -26,8 +27,9 @@ const STRINGS = {
   en: {
     // Modificado por Yerardy Castillo: simplificar la indicación para escanear el QR.
     cta: 'Scan the QR code with your camera',
-    ctaSub: 'Helloii opens with the event.',
-    download: 'Download Helloii',
+    // Modificado por Yerardy Castillo: evitar repetir el nombre de la marca en los textos pequeños.
+    ctaSub: 'The app opens with the event.',
+    download: 'Download the app',
     opensOn: 'Check-in opens on {day} at {time}',
     opensToday: 'Check-in opens today at {time}',
     hereOne: 'person is already here',
