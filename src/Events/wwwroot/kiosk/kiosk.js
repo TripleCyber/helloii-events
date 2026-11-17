@@ -341,7 +341,7 @@ async function preparePhoto(attendee) {
 function confetti() {
   const box = $('confetti');
   box.replaceChildren();
-  // Modificado por Yerardy Castillo: fuegos artificiales escalonados detrás de la bienvenida, aptos para Android.
+  // Modificado por Yerardy Castillo: ocho estallidos escalonados durante los 4 segundos de bienvenida.
   const colors = ['#FF4B55', '#FFD65A', '#67F59B', '#6BDBFF', '#FFFFFF', '#E4A0FF'];
   const origins = [[15, 18], [85, 23], [10, 65], [90, 70], [38, 10], [65, 85], [18, 88], [83, 43]];
   const fragment = document.createDocumentFragment();
@@ -351,7 +351,7 @@ function confetti() {
       piece.className = 'cf';
       const angle = (Math.PI * 2 * i) / 24;
       const distance = 12 + Math.random() * 15;
-      piece.style.cssText = `left:${left}%;top:${top}%;--x:calc(var(--u) * ${Math.cos(angle) * distance});--y:calc(var(--u) * ${Math.sin(angle) * distance});--c:${colors[burst % colors.length]};--d:${burst * .19}s`;
+      piece.style.cssText = `left:${left}%;top:${top}%;--x:calc(var(--u) * ${Math.cos(angle) * distance});--y:calc(var(--u) * ${Math.sin(angle) * distance});--c:${colors[burst % colors.length]};--d:${burst * .38}s`;
       fragment.appendChild(piece);
     }
   });
