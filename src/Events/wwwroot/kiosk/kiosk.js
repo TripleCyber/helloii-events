@@ -319,6 +319,25 @@ async function photoOf(attendee) {
   }
 }
 
+// Modificado por Yerardy Castillo: descargar y preparar la foto antes de mostrar el círculo, sin iniciales.
+async function preparePhoto(attendee) {
+  const url = await photoOf(attendee);
+  if (!url) return null;
+  return new Promise((resolve) => {
+    const photo = new Image();
+    const finish = (result) => {
+      clearTimeout(timeout);
+      photo.onload = photo.onerror = null;
+      resolve(result);
+    };
+    const timeout = setTimeout(() => finish(null), 500);
+    photo.onload = () => finish(photo);
+    photo.onerror = () => finish(null);
+    photo.alt = attendee.displayName || attendee.firstName || '';
+    photo.src = url;
+  });
+}
+
 function confetti() {
   const box = $('confetti');
   box.replaceChildren();
@@ -342,11 +361,20 @@ function confetti() {
 async function showNext() {
   if (showing || !queue.length) return;
   showing = true;
-  const attendee = queue.shift();
+  const pending = queue.shift();
+  const attendee = pending.attendee;
+  // El QR permanece disponible mientras se prepara la foto; los 4 segundos empiezan al mostrarla.
+  const preparedPhoto = await pending.photo;
   const face = $('welcome-face');
-  // Modificado por Yerardy Castillo: nombre completo y foto circular con regreso automático a los 5 segundos.
+  // Modificado por Yerardy Castillo: nombre completo y foto circular con regreso automático a los 4 segundos.
   const name = attendee.displayName || attendee.firstName || '';
-  face.textContent = initialsOf(name);
+  if (preparedPhoto) face.replaceChildren(preparedPhoto);
+  else {
+    const placeholder = document.createElement('span');
+    placeholder.textContent = '👤';
+    placeholder.setAttribute('aria-label', LANG === 'en' ? 'Photo unavailable' : 'Foto no disponible');
+    face.replaceChildren(placeholder);
+  }
   $('welcome-hi').textContent = t('hi', { name });
   // Modificado por Yerardy Castillo: usar el logo oficial de Helloii dentro de la bienvenida.
   const welcomeWords = t('welcome').split('Helloii');
@@ -358,21 +386,12 @@ async function showNext() {
   welcome.classList.remove('out');
   welcome.hidden = false;
   confetti();
-  let active = true;
-  photoOf(attendee).then((url) => {
-    if (!url || !active) return;
-    const photo = image(url);
-    photo.alt = name;
-    photo.onload = () => { if (active) face.replaceChildren(photo); };
-    if (photo.complete && photo.naturalWidth > 0) face.replaceChildren(photo);
-  });
   try {
-    // Modificado por Yerardy Castillo: incluir la salida suave dentro de los 5 segundos totales.
-    await new Promise((r) => setTimeout(r, 4550));
+    // Modificado por Yerardy Castillo: incluir la salida suave dentro de los 4 segundos totales.
+    await new Promise((r) => setTimeout(r, 3550));
     welcome.classList.add('out');
     await new Promise((r) => setTimeout(r, 450));
   } finally {
-    active = false;
     welcome.hidden = true;
     $('confetti').replaceChildren();
     showing = false;
@@ -397,7 +416,8 @@ function connect() {
     } else if (data.type === 'checkin') {
       count = data.count;
       renderCount(true);
-      queue.push(data.attendee);
+      // Modificado por Yerardy Castillo: preparar la foto en cuanto llega el check-in, incluso si hay cola.
+      queue.push({ attendee: data.attendee, photo: preparePhoto(data.attendee) });
       showNext();
     } else if (data.type === 'revoked') {
       revoked = true;
