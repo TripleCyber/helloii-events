@@ -240,7 +240,16 @@ function renderEvent() {
   logo.replaceChildren();
   if (event.organizer?.logoUrl) logo.append(image(event.organizer.logoUrl));
   else logo.textContent = initialsOf(event.organizer?.name);
-  $('title').textContent = event.title;
+  // Modificado por Yerardy Castillo: mostrar el logo en lugar de la palabra Helloii en el título del evento.
+  const title = $('title');
+  const titleText = event.title || '';
+  const brand = /\bHelloii\b/i.exec(titleText);
+  if (brand) {
+    const titleLogo = image('/kiosk/assets/helloii-welcome-logo.png', 'title-logo');
+    titleLogo.alt = brand[0];
+    title.replaceChildren(document.createTextNode(titleText.slice(0, brand.index)), titleLogo,
+      document.createTextNode(titleText.slice(brand.index + brand[0].length)));
+  } else title.textContent = titleText;
   $('when').textContent = whenText();
   $('venue').textContent = event.venue || '';
   $('venue').hidden = !event.venue;
