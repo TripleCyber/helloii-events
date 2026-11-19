@@ -208,6 +208,7 @@ function wavingMascot(url) {
   // Las máscaras conservan la imagen original; solo separan la mano y el ojo para animarlos.
   svg.innerHTML = `<defs>
     <image id="mascot-source" width="1065" height="1477"/>
+    <image id="mascot-clean-source" width="1065" height="1477"/>
     <filter id="mascot-green" color-interpolation-filters="sRGB">
       <feColorMatrix type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  -1 2 -1 0 0"/>
       <feComponentTransfer><feFuncA type="linear" slope="20" intercept="-2"/></feComponentTransfer>
@@ -219,7 +220,6 @@ function wavingMascot(url) {
     <clipPath id="mascot-eye-area"><ellipse cx="641" cy="429" rx="54" ry="70"/></clipPath>
     <mask id="mascot-body-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="1065" height="1477">
       <rect width="1065" height="1477" fill="white"/>
-      <rect x="775" y="490" width="260" height="252" fill="black" mask="url(#mascot-hand-mask)"/>
       <ellipse cx="641" cy="429" rx="54" ry="70" fill="black"/>
     </mask>
     <linearGradient id="mascot-eyelid" x1="0" y1="0" x2="0" y2="1">
@@ -227,15 +227,22 @@ function wavingMascot(url) {
     </linearGradient>
   </defs>
   <ellipse cx="641" cy="429" rx="55" ry="71" fill="url(#mascot-eyelid)"/>
-  <use href="#mascot-source" mask="url(#mascot-body-mask)"/>
+  <!-- Modificado por Yerardy Castillo: cabeza reconstruida detrás de la mano para no dejar huellas. -->
+  <use href="#mascot-clean-source" mask="url(#mascot-body-mask)"/>
   <g class="mascot-hand"><use href="#mascot-source" mask="url(#mascot-hand-mask)"/></g>
-  <g class="mascot-green-eye"><use href="#mascot-source" clip-path="url(#mascot-eye-area)"/></g>
-  <path class="mascot-wink" d="M604 427 Q641 453 678 427" fill="none" stroke="#17130F" stroke-width="8" stroke-linecap="round"/>`;
+  <g class="mascot-green-eye">
+    <use href="#mascot-source" clip-path="url(#mascot-eye-area)"/>
+  </g>
+  <path class="mascot-wink" d="M604 481 Q641 501 678 481" fill="none" stroke="#17130F" stroke-width="8" stroke-linecap="round"/>`;
   const source = svg.querySelector('#mascot-source');
   source.setAttribute('href', url);
   source.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', url);
-  svg.querySelectorAll('use').forEach((node) => node.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', '#mascot-source'));
+  const cleanSource = svg.querySelector('#mascot-clean-source');
+  cleanSource.setAttribute('href', '/kiosk/assets/mascot-clean-head.png');
+  cleanSource.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', '/kiosk/assets/mascot-clean-head.png');
+  svg.querySelectorAll('use').forEach((node) => node.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', node.getAttribute('href')));
   source.addEventListener('error', () => svg.replaceWith(image(url, 'fit')), { once: true });
+  cleanSource.addEventListener('error', () => svg.replaceWith(image(url, 'fit')), { once: true });
   return svg;
 }
 
