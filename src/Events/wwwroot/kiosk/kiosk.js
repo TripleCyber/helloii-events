@@ -198,6 +198,47 @@ function image(src, cls) {
   return img;
 }
 
+// Modificado por Yerardy Castillo: animar la mano y el ojo verde del muñeco sin mover el QR.
+function wavingMascot(url) {
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('viewBox', '0 0 1065 1477');
+  svg.setAttribute('role', 'img');
+  svg.setAttribute('aria-label', LANG === 'en' ? 'Helloii waving and winking' : 'Helloii saludando y guiñando el ojo');
+  svg.classList.add('fit', 'mascot-animation');
+  // Las máscaras conservan la imagen original; solo separan la mano y el ojo para animarlos.
+  svg.innerHTML = `<defs>
+    <image id="mascot-source" width="1065" height="1477"/>
+    <filter id="mascot-green" color-interpolation-filters="sRGB">
+      <feColorMatrix type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  -1 2 -1 0 0"/>
+      <feComponentTransfer><feFuncA type="linear" slope="20" intercept="-2"/></feComponentTransfer>
+    </filter>
+    <clipPath id="mascot-hand-area"><rect x="775" y="490" width="260" height="252"/></clipPath>
+    <mask id="mascot-hand-mask" maskUnits="userSpaceOnUse" x="775" y="490" width="260" height="252">
+      <use href="#mascot-source" filter="url(#mascot-green)" clip-path="url(#mascot-hand-area)"/>
+    </mask>
+    <clipPath id="mascot-eye-area"><ellipse cx="641" cy="429" rx="54" ry="70"/></clipPath>
+    <mask id="mascot-body-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="1065" height="1477">
+      <rect width="1065" height="1477" fill="white"/>
+      <rect x="775" y="490" width="260" height="252" fill="black" mask="url(#mascot-hand-mask)"/>
+      <ellipse cx="641" cy="429" rx="54" ry="70" fill="black"/>
+    </mask>
+    <linearGradient id="mascot-eyelid" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FDE7D0"/><stop offset="1" stop-color="#FCE8D1"/>
+    </linearGradient>
+  </defs>
+  <ellipse cx="641" cy="429" rx="55" ry="71" fill="url(#mascot-eyelid)"/>
+  <use href="#mascot-source" mask="url(#mascot-body-mask)"/>
+  <g class="mascot-hand"><use href="#mascot-source" mask="url(#mascot-hand-mask)"/></g>
+  <g class="mascot-green-eye"><use href="#mascot-source" clip-path="url(#mascot-eye-area)"/></g>
+  <path class="mascot-wink" d="M604 427 Q641 453 678 427" fill="none" stroke="#17130F" stroke-width="8" stroke-linecap="round"/>`;
+  const source = svg.querySelector('#mascot-source');
+  source.setAttribute('href', url);
+  source.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', url);
+  svg.querySelectorAll('use').forEach((node) => node.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', '#mascot-source'));
+  source.addEventListener('error', () => svg.replaceWith(image(url, 'fit')), { once: true });
+  return svg;
+}
+
 // The box takes the poster's own shape, between 4:5 and 16:9; anything beyond sits on its blurred self.
 function renderPoster() {
   const box = $('poster');
@@ -217,7 +258,8 @@ function renderPoster() {
     return;
   }
   // Modificado por Yerardy Castillo: conservar la transparencia del póster sin una copia difuminada detrás.
-  box.append(image(first.url, 'fit'));
+  // Modificado por Yerardy Castillo: aplicar las máscaras solo a esta imagen; otros pósters se conservan completos.
+  box.append(first.url.endsWith('/media/6cfefcfccdda4468adde03441f996839') ? wavingMascot(first.url) : image(first.url, 'fit'));
 }
 
 function whenText() {

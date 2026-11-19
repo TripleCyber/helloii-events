@@ -84,7 +84,20 @@ h1 { margin: 0; }
 /* Modificado por Yerardy Castillo: movimiento suave sin desplazar el QR ni el contenido. */
 .poster .fit { animation: mascot-float 5s ease-in-out infinite; }
 @keyframes mascot-float { 50% { transform: translateY(calc(var(--u) * -1)); } }
+/* Modificado por Yerardy Castillo: saludo de la mano y guiño verde, con pausas naturales. */
+.poster .mascot-animation { position: absolute; top: 0; left: 0; overflow: visible; }
+.mascot-hand { transform-box: view-box; transform-origin: 860px 724px; animation: mascot-wave 6s ease-in-out infinite; }
+.mascot-green-eye { transform-box: view-box; transform-origin: 641px 429px; animation: mascot-eye 6s ease-in-out infinite; }
+.mascot-wink { opacity: 0; animation: mascot-wink 6s ease-in-out infinite; }
+@keyframes mascot-wave {
+  0%, 8%, 28%, 100% { transform: rotate(0); }
+  12%, 20% { transform: rotate(-10deg); }
+  16%, 24% { transform: rotate(10deg); }
+}
+@keyframes mascot-eye { 0%, 31%, 39%, 100% { transform: scaleY(1); } 35% { transform: scaleY(.02); } }
+@keyframes mascot-wink { 0%, 31%, 39%, 100% { opacity: 0; } 35% { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .poster .fit { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .mascot-hand, .mascot-green-eye, .mascot-wink { animation: none; } }
 .poster-initials { font-size: calc(var(--u) * 14); font-weight: 800; color: var(--accent); }
 
 .org {
